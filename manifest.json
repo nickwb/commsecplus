@@ -1,0 +1,15 @@
+{
+    "manifest_version": 2,
+    
+    "name": "CommSecPlus",
+    "description": "Enhancements to CommSec.",
+    "version": "1.0",
+    
+    "content_scripts": [
+        {
+            "matches": ["https://*.retailservices.wallst.com/charting/jaguar/interactive*"],
+            "all_frames": true,
+            "js": ["jquery.js", "charts.js"]
+        }
+    ]
+}
