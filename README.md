@@ -8,7 +8,7 @@ Hello traveller! This is a *very* young project. It is not ready for use by end 
 The vision of commsecplus is to augment the standard CommSec experience with a handful of useful analytical tools, making it easier for the trader to make an informed decision about a security.
 
 ## Roadmap
-Check out the 1.0 milestone to see planned features
+Check out the [milestones](https://github.com/nickwb/commsecplus/issues/milestones) to see planned features
 
 ## A note on security
 Permitting an extension to access pages on CommSec is an inherently risky business. A malicious extension could send your passwords, personal information and/or portfolio information to a third party - or could even execute trades on your account without your knowledge. It is very important that you have full trust in any extension which you permit to access CommSec.
