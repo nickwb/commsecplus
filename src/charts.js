@@ -1,12 +1,9 @@
 var trendlines = function() {
 
     var trendlineToggle = $('#trendlineAction'),
-        isDragging = false,
         trendlineCanvas;
     
     var calculateAll = function() {
-    
-        //if(!isDragging) { return; }
     
         var lines = [],
             head = null,
@@ -52,20 +49,33 @@ var trendlines = function() {
             
         });
         
+        var gradients = [];
+        var canvasWidth = trendlineCanvas.width();
+        
         $.each(lines, function(i, l) {
             if(l.handles.length !== 2) {
                 console.log('Handle count unexpected: ' + l.handles.length);
                 return;
             }
             
-            var rise = Math.abs(l.handles[0].top - l.handles[1].top),
-                run = Math.abs(l.handles[0].left - l.handles[1].left);
+            var left, right;
+            if(l.handles[0].left < l.handles[1].left) {
+                left = l.handles[0];
+                right = l.handles[1];
+            } else {
+                left = l.handles[1];
+                right = l.handles[0];
+            }
+            
+            var rise = -(right.top - left.top),
+                run = right.left - left.left;
                 
             if(rise === 0 || run === 0) {
                 return;
             }
             
-            var gradient = (rise/run).toFixed(3);
+            var gradient = rise/run;
+            gradients.push(gradient);
                 
             if(l.changeElm === null) {
                 console.log('Change elm missing.');
@@ -73,29 +83,54 @@ var trendlines = function() {
             }
             
             var percent = percentExpr.exec(l.changeElm.text())[0];
-            l.changeElm.text( percent + ' ' + gradient );
+            l.changeElm.text( percent + ' ' + gradient.toFixed(3) );
+            l.changeElm.css('text-shadow', '#ccc 1px 1px 1px');
+            l.changeElm.css('background-color', 'rgba(255,255,255,0.8)');
+            l.changeElm.css('font-weight', 'bold');
+            
+            var changeElmPosn = l.changeElm.position();
+            
+            if(changeElmPosn.left > (canvasWidth * 0.85)) {
+                l.changeElm.css('right', (canvasWidth - changeElmPosn.left) + 'px');
+                l.changeElm.css('left', '');
+                var changeElmTopOffset = gradient < 0 ? 25 : 40;
+                l.changeElm.css('top', (changeElmPosn.top + changeElmTopOffset) + 'px');
+            } else {
+                l.changeElm.css('right', '');
+            }
         });
+        
+        if(gradients.length > 0) {
+            var gradientSum = gradients.reduce(function(sum, g) { return sum + g; }, 0);
+            var gradientAvg = gradientSum / gradients.length;
+            
+            var $timeframes = $('#ul-timeframe-nav');
+            var avgSpacer = $timeframes.find('.csp-spacer');
+            if(avgSpacer.length === 0) {
+                avgSpacer = $('<span>').addClass('spacer csp-spacer').text('|');
+                $timeframes.append(avgSpacer);
+            }
+            
+            var avgLi = $timeframes.find('.csp-avg-li');
+            if(avgLi.length === 0) {
+                avgLi = $('<li>').addClass('csp-avg-li').css('padding', '0 5px');
+                $timeframes.append(avgLi);
+            }
+            
+            avgLi.text('Avg Grad: ' + gradientAvg.toFixed(4));
+        }
     };
     
-    var updateEvent = 'mousemove.trendline';
-    var startEvent = 'mousedown.trendline';
-    var endEvent = 'mouseup.trendline';
-    
-    //var startDrag = function() { isDragging = true; };
-    var endDrag = function() { calculateAll(); /*isDragging = false;*/ };
+    var calcEvent = 'mouseup.trendline';
     
     var init = function() {
         trendlineCanvas = $('#TrendLineCanvas');
-        //trendlineCanvas.on(updateEvent, null, calculateAll);
-        //trendlineCanvas.on(startEvent, null, startDrag);
-        $(document).on(endEvent, null, endDrag);
+        $(document).on(calcEvent, null, calculateAll);
         trendlineToggle.one('click', '*', dispose);
     };
     
     var dispose = function() {
-        //trendlineCanvas.off(updateEvent, null, calculateAll);
-        //trendlineCanvas.off(startEvent, null, startDrag);
-        $(document).off(endEvent, null, endDrag);
+        $(document).off(calcEvent, null, calculateAll);
         trendlineToggle.one('click', '*', init);
     };
     
