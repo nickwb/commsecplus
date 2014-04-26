@@ -1,6 +1,8 @@
 # commsecplus
 A chrome extension providing enhancements to CommSec.
 
+![commsecplusicon](https://raw.githubusercontent.com/nickwb/commsecplus/master/icon/icon128.png)
+
 ## Early Days
 Hello traveller! This is a *very* young project. It is not ready for use by end users. Developers looking to contribute are encouraged to get in touch.
 
