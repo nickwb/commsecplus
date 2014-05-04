@@ -15,7 +15,7 @@
         {
             "matches": ["https://*.retailservices.wallst.com/charting/jaguar/interactive*"],
             "all_frames": true,
-            "js": ["lib/jquery.js", "src/charts.js"]
+            "js": ["lib/jquery.js", "build/hooks/chart.js"]
         }
     ]
     
